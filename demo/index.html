@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>vaadin-grid – Pagination</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../jquery/dist/jquery.min.js"></script>
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../wt-breadcrumb.html">
+
+</head>
+
+<body unresolved>
+  <div class="vertical-section-container centered">
+
+    <style>
+
+    </style>
+
+    <h3>Breadcrumbs</h3>
+    <p>
+      The <code>&lt;wt-breadcrumb&gt;</code> is a component that puts up clickable breadcrumbs
+    </p>
+    <p>
+    Note:  In this simple example we fill in the items array in &lt;wt-breadcrumb&gt; and listen for the event so we can do something with the click.
+    </p>
+    <p>
+    In this case we do an simple ajax call with jquery and update the "items" array -- which in turn updates the bread crumbs
+    </p>
+    <demo-snippet>
+      <template>
+      <wt-breadcrumb id="breadcrumb" items='[
+              {"url_path": "/", "desc": "Home"},
+              {"url_path": "/test2", "desc": "Test2"},
+              {"url_path": "/test3", "desc": "Test3"}
+        ]'>
+      </wt-breadcrumb>
+
+
+      <script>
+      // Capture the event thrown by wt-breadcrumb so we can take some action on it.
+      window.addEventListener('wt-breadcrumb-clicked', function(e) {
+         $.ajax({url: "data/breadcrumbs.txt", success: function(result){
+                var response = JSON.parse(result);
+                if (response.success) {
+                  var bc = $("#breadcrumb");
+                  bc[0].items = response.payload;
+                  alert("See Console.log for event thrown;)  The item is found under e.detail.item");
+                  console.log(e);
+                }
+            }});
+      });
+
+      </script>
+      </template>
+    </demo-snippet>
+
+    <demo-snippet>
+      <template>
+        <wt-breadcrumb-demo></wt-breadcrumb-demo>
+        <dom-module id="wt-breadcrumb-demo">
+          <template>
+            <style>
+
+            </style>
+            <wt-breadcrumb items='[
+                    {"url_path": "/", "desc": "Home"},
+                    {"url_path": "/test1", "desc": "Test1"},
+                    {"url_path": "/test2", "desc": "Test2"}
+              ]'>
+            </wt-breadcrumb>
+
+          </template>
+          <script>
+
+              class WtBreadcrumbDemo extends Polymer.Element {
+                static get is() { return 'wt-breadcrumb-demo'; }
+
+                static get properties() {
+                  return {
+
+                  }
+                }
+
+                // Element class can define custom element reactions
+                connectedCallback() {
+                  super.connectedCallback();
+
+                  // Capture the event thrown by wt-breadcrumb so we can take some action on it.
+                  this.addEventListener('wt-breadcrumb-clicked', function(e) {
+                    alert("See Console.log for event thrown;)  The item is found under e.detail.item")
+                    console.log(e);
+                  });
+                }
+
+                ready() {
+                    super.ready();
+                }
+
+              }
+
+              window.customElements.define(WtBreadcrumbDemo.is, WtBreadcrumbDemo);
+          </script>
+        </dom-module>
+      </template>
+    </demo-snippet>
+  </div>
+</body>
+
+
+</html>
+
+
+
