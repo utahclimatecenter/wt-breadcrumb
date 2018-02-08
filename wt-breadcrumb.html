@@ -1,0 +1,134 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+
+<link rel="import" href="../wt-bootstrap-styles/wt-bootstrap-styles.html">
+
+<!--
+`<my-station>` Shows the vaadin grid in action with iron-ajax against the climate api.
+In typical use, just slap some `<my-station>` anywhere you would like to put it.
+      <my-station></my-station>
+Wham! It's all awesome now!
+
+@demo /web-components/drawer-app/#/station/list  Super cool demo!!
+-->
+<dom-module id="wt-breadcrumb">
+  <template>
+    <style include="bootstrap-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+
+      .breadcrumb-arrow {
+        color: var(--breadcrumb-color1,rgb(67, 110, 144));
+        margin: -2px 6px 0 6px;
+      }
+
+      .breadcrumb_layout {
+        height: 30px;
+        margin-left: 20px;
+        overflow: hidden;
+      }
+
+    </style>
+
+    <div class="breadcrumb_layout">
+      <template is="dom-repeat" items="{{items}}" as="crumb">
+        <template is="dom-if" if="[[_firstCrumb(crumb)]]">
+          <a href='javascript:void(0)' on-click='_breadcrumbClicked'>[[crumb.desc]]</a>
+        </template>
+          <template is="dom-if" if="[[!_firstCrumb(crumb)]]">
+            <template is="dom-if" if="[[_notLastCrumb(crumb)]]">
+              <a href='javascript:void(0)' on-click='_breadcrumbClicked'>[[crumb.desc]]</a>
+              <iron-icon class="breadcrumb-arrow" icon="chevron-right"></iron-icon>
+            </template>
+            <template is="dom-if" if="[[!_notLastCrumb(crumb)]]">
+              [[crumb.desc]]
+            </template>
+        </template>
+      </template>
+    </div>
+
+  </template>
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class WtBreadcrumb extends Polymer.Element {
+      static get is() { return 'wt-breadcrumb'; }
+
+      static get properties() {
+        return {
+            items: {
+              type: Array,
+              value: [{url_path: "", desc: "HOME"}],
+              readOnly: false       // Allow outside folks to change the items
+            }
+        }
+      }
+
+      // Observe changes to the users array
+      static get observers() {
+        return [
+          '_itemsChanged(items, items.splices)'
+        ]
+      }
+
+      // Element class can define custom element reactions
+      connectedCallback() {
+        super.connectedCallback();
+      }
+
+      ready() {
+          super.ready();
+      }
+
+      _firstCrumb(crumb) {
+        if (this.items.length == 1) {
+          return 1
+        }
+        return 0
+      }
+
+      _notLastCrumb(crumb) {
+        var idx = this.items.indexOf(crumb);
+        if (idx == (this.items.length -1)) {
+
+          return 0
+        }
+
+
+        return 1
+      }
+
+      _itemsChanged(items, splices) {
+        if (items === undefined || splices === undefined) {
+          return;
+        }
+
+        // 1) First re-render the breadcrums
+
+        console.log(items, splices);
+      }
+
+      _breadcrumbClicked(e) {
+
+        this.dispatchEvent(new CustomEvent('wt-breadcrumb-clicked', {
+          composed: true,
+          bubbles: true,
+          detail: {
+            event: e,
+            item: e.model.crumb
+          }
+        }));
+      }
+    }
+
+    window.customElements.define(WtBreadcrumb.is, WtBreadcrumb);
+  </script>
+</dom-module>
+
